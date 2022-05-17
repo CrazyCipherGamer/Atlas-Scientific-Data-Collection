@@ -10,9 +10,13 @@
 
 Ezo_board EC = Ezo_board(100, "EC");
 Ezo_board RTD = Ezo_board(102, "RTD");
+Ezo_board ORP = Ezo_board(98, "ORP");
+Ezo_board PH = Ezo_board(99, "PH");
 
 float EC_data[10];
 float RTD_data[10];
+float ORP_data[10];
+float PH_data[10];
 int elementNum;
 
 void SendReadCmds();
@@ -46,6 +50,20 @@ void setup() {
     Serial.print(stringToPrint + " ");
   }
   Serial.print("\n");
+  Serial.print("ORP: ");
+  for(int i = 0; i < 10; ++i)
+  {
+    String stringToPrint = String(ORP_data[i], 3);
+    Serial.print(stringToPrint + " ");
+  }
+  Serial.print("\n");
+  Serial.print("PH: ");
+  for(int i = 0; i < 10; ++i)
+  {
+    String stringToPrint = String(PH_data[i], 3);
+    Serial.print(stringToPrint + " ");
+  }
+  Serial.print("\n");
   
 }
 
@@ -56,11 +74,18 @@ void SendReadCmds()
 {
   RTD.send_read_cmd();
   EC.send_read_cmd();
+  ORP.send_read_cmd();
+  PH.send_read_cmd();
 }
 
 void ReadReadings()
 {
   RTD.receive_read_cmd();
+  EC.receive_read_cmd();
+  ORP.receive_read_cmd();
+  PH.receive_read_cmd();
+
+  
   if(RTD.get_error() == Ezo_board::SUCCESS)    //Check if the data is valid or not
   {
     float reading = RTD.get_last_received_reading();
@@ -70,6 +95,8 @@ void ReadReadings()
   {
     RTD_data[elementNum] = 25.0f;
   }
-  EC.receive_read_cmd();
+  
   EC_data[elementNum] = EC.get_last_received_reading();
+  ORP_data[elementNum] = ORP.get_last_received_reading();
+  PH_data[elementNum] = PH.get_last_received_reading(); 
 }
